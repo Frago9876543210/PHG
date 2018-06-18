@@ -1,0 +1,19 @@
+{
+  "require": {
+	"ext-zlib": ">=1.2.11",
+	"pocketmine/binaryutils": "^0.1.0"
+  },
+  "autoload": {
+	"psr-4": {
+	  "": [
+		"src"
+	  ]
+	}
+  },
+  "repositories": [
+	{
+	  "type": "vcs",
+	  "url": "https://github.com/pmmp/BinaryUtils"
+	}
+  ]
+}
