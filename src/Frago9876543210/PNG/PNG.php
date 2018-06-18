@@ -32,7 +32,8 @@ class PNG{
 
 		$IDAT = new IDAT;
 		$IDAT->compressionLevel = $compressionLevel;
-		$IDAT->count = $IHDR->height;
+		$IDAT->width = $IHDR->width;
+		$IDAT->height = $IHDR->height;
 		$IDAT->payload = $rgba;
 		$this->appendChunk($IDAT);
 

@@ -11,11 +11,13 @@ class IDAT extends Chunk{
 	/** @var string */
 	public $payload;
 	/** @var int */
-	public $count;
+	public $width;
+	/** @var int */
+	public $height;
 
 	protected function encodeContent() : void{
-		$array = str_split($this->payload, $this->count * 4);
-		for($i = 0; $i < $this->count; $i++){
+		$array = str_split($this->payload, $this->width * 4);
+		for($i = 0; $i < $this->height; $i++){
 			$array[$i] = "\x00" . $array[$i];
 		}
 		$this->content->put(zlib_encode(implode("", $array), ZLIB_ENCODING_DEFLATE, $this->compressionLevel));
