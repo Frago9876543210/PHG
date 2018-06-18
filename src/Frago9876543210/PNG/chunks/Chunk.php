@@ -46,4 +46,42 @@ abstract class Chunk extends BinaryStream{
 	abstract protected function decodeContent() : void;
 
 	abstract public function getName() : string;
+
+	public function isUpperCase(string $char, int $index) : bool{
+		//for example: A = 1000001, a = 1100001. This is also true for other letters
+		return (ord($char{$index}) & 32) === 0;
+	}
+
+	/**
+	 * More info about chunk naming conventions:
+	 * @link https://tools.ietf.org/html/rfc2083#page-12
+	 *
+	 * 0 (uppercase) = critical, 1 (lowercase) = ancillary.
+	 * @return bool
+	 */
+	public function isCritical() : bool{
+		return $this->isUpperCase($this->getName(), 0);
+	}
+
+
+	/**
+	 * 0 (uppercase) = public, 1 (lowercase) = private.
+	 * @return bool
+	 */
+	public function isPublic() : bool{
+		return $this->isUpperCase($this->getName(), 1);
+	}
+
+	/*
+	 * Reserved bit: bit 5 of third byte
+	 * Must be 0 (uppercase) in files conforming to this version of PNG.
+	 */
+
+	/**
+	 * 0 (uppercase) = unsafe to copy, 1 (lowercase) = safe to copy.
+	 * @return bool
+	 */
+	public function isSafeToCopy() : bool{
+		return $this->isUpperCase($this->getName(), 3);
+	}
 }
