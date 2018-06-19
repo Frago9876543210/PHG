@@ -23,7 +23,7 @@ class PNG{
 	/** @var int */
 	protected $compressionLevel;
 	/** @var Color[][] */
-	public $colors = [];
+	protected $colors = [];
 	/** @var string */
 	public $rgba = "";
 
@@ -43,18 +43,27 @@ class PNG{
 		return $this->width;
 	}
 
-	public function getHeight(){
+	public function getHeight() : int{
 		return $this->height;
 	}
 
-	public function buildIHDR() : void{
+	public function buildImage() : void{
+		$this->buildIHDR();
+		if(!empty($this->colors)){
+			$this->toRGBAString();
+		}
+		$this->buildIDAT();
+		$this->buildIEND();
+	}
+
+	protected function buildIHDR() : void{
 		$IHDR = new IHDR;
 		$IHDR->width = $this->width;
 		$IHDR->height = $this->height;
 		$this->appendChunk($IHDR);
 	}
 
-	public function buildIDAT() : void{
+	protected function buildIDAT() : void{
 		$IDAT = new IDAT;
 		$IDAT->compressionLevel = $this->compressionLevel;
 		$IDAT->width = $this->width;
@@ -63,7 +72,7 @@ class PNG{
 		$this->appendChunk($IDAT);
 	}
 
-	public function buildIEND() : void{
+	protected function buildIEND() : void{
 		$this->appendChunk(new IEND);
 	}
 
@@ -75,7 +84,7 @@ class PNG{
 		$this->colors[$y][$x] = $color;
 	}
 
-	public function toRGBAString() : void{
+	protected function toRGBAString() : void{
 		for($y = 0; $y < $this->height; ++$y){
 			for($x = 0; $x < $this->width; ++$x){
 				$this->rgba .= (string) $this->colors[$y][$x];
