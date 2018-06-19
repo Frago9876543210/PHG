@@ -16,32 +16,71 @@ class PNG{
 	protected $chunks = [];
 	/** @var string */
 	protected $buffer;
+	/** @var int */
+	protected $width;
+	/** @var int */
+	protected $height;
+	/** @var int */
+	protected $compressionLevel;
+	/** @var Color[][] */
+	public $colors = [];
+	/** @var string */
+	public $rgba = "";
 
 	/**
 	 * PNG constructor.
-	 * @param int    $width
-	 * @param int    $height
-	 * @param string $rgba
-	 * @param int    $compressionLevel
+	 * @param int $width
+	 * @param int $height
+	 * @param int $compressionLevel
 	 */
-	public function __construct(int $width, int $height, string $rgba, int $compressionLevel = 9){
+	public function __construct(int $width, int $height, int $compressionLevel = 9){
+		$this->width = $width;
+		$this->height = $height;
+		$this->compressionLevel = $compressionLevel;
+	}
+
+	public function getWidth() : int{
+		return $this->width;
+	}
+
+	public function getHeight(){
+		return $this->height;
+	}
+
+	public function buildIHDR() : void{
 		$IHDR = new IHDR;
-		$IHDR->width = $width;
-		$IHDR->height = $height;
+		$IHDR->width = $this->width;
+		$IHDR->height = $this->height;
 		$this->appendChunk($IHDR);
+	}
 
+	public function buildIDAT() : void{
 		$IDAT = new IDAT;
-		$IDAT->compressionLevel = $compressionLevel;
-		$IDAT->width = $IHDR->width;
-		$IDAT->height = $IHDR->height;
-		$IDAT->payload = $rgba;
+		$IDAT->compressionLevel = $this->compressionLevel;
+		$IDAT->width = $this->width;
+		$IDAT->height = $this->height;
+		$IDAT->payload = $this->rgba;
 		$this->appendChunk($IDAT);
+	}
 
+	public function buildIEND() : void{
 		$this->appendChunk(new IEND);
 	}
 
 	public function appendChunk(Chunk $chunk) : void{
 		$this->chunks[] = $chunk;
+	}
+
+	public function setPixel(int $x, int $y, Color $color) : void{
+		$this->colors[$y][$x] = $color;
+	}
+
+	public function toRGBAString() : void{
+		for($y = 0; $y < $this->height; ++$y){
+			for($x = 0; $x < $this->width; ++$x){
+				$this->rgba .= (string) $this->colors[$y][$x];
+			}
+		}
 	}
 
 	public function __toString() : string{

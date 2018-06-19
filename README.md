@@ -4,10 +4,22 @@
 
 declare(strict_types=1);
 
+use Frago9876543210\PNG\Color;
+
 require_once "vendor/autoload.php";
 
-$png = new \Frago9876543210\PNG\PNG(64, 64,
-	str_repeat("\x00\x00\xff\xff", 64 * 32) . str_repeat("\xff\xff\x00\xff", 64 * 32)
-);
+$png = new \Frago9876543210\PNG\PNG(2, 2);
+$png->buildIHDR();
+
+$png->setPixel(0, 0, new Color(0xff, 0, 0));
+$png->setPixel(1, 0, new Color(0xff, 0, 0));
+
+$png->setPixel(0, 1, new Color(0xff, 0xff, 0));
+$png->setPixel(1, 1, new Color(0xff, 0xff, 0));
+
+$png->toRGBAString();
+
+$png->buildIDAT();
+$png->buildIEND();
 $png->save("test.png");
 ```
